@@ -53,31 +53,44 @@
   </div>
 
  <script>
-  async function generate() {
-    const prompt = document.getElementById("prompt").value;
-    const output = document.getElementById("output");
-    output.innerText = "Generating...";
+async function generate() {
+  const prompt = document.getElementById("prompt").value;
+  const output = document.getElementById("output");
 
-    try {
-      const res = await fetch("https://ai-video-backend-ikep.onrender.com/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ prompt })
-      });
+  output.innerText = "Generating...";
 
-      const data = await res.json();
+  try {
+    const res = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer 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"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        input: [
+          {
+            role: "system",
+            content: "You are an expert faceless short-form video creator. Create viral scripts with visual descriptions. No faces."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
 
-      if (data.content) {
-        output.innerText = data.content;
-      } else if (data.script) {
-        output.innerText = data.script;
-      } else {
-        output.innerText = JSON.stringify(data, null, 2);
-      }
-    } catch (err) {
-      output.innerText = "Error connecting to backend.";
+    const data = await res.json();
+
+    if (data.output_text) {
+      output.innerText = data.output_text;
+    } else {
+      output.innerText = JSON.stringify(data, null, 2);
     }
+
+  } catch (err) {
+    output.innerText = "Error connecting to OpenAI.";
   }
+}
 </script>
