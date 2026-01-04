@@ -52,25 +52,28 @@
     <div class="output" id="output"></div>
   </div>
 
-  <script>
-    async function generate() {
-      const prompt = document.getElementById("prompt").value;
-      const output = document.getElementById("output");
-      output.innerText = "Generating...";
+ <script>
+  async function generate() {
+    const prompt = document.getElementById("prompt").value;
+    const output = document.getElementById("output");
+    output.innerText = "Generating script...";
 
-      try {
-        const res = await fetch("https://ai-video-backend-ikep.onrender.com/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt })
-        });
+    try {
+      const res = await fetch("https://ai-video-backend.onrender.com/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
 
-        const data = await res.json();
-        output.innerText = "Job accepted! ID: " + data.job_id;
-      } catch (e) {
-        output.innerText = "Error connecting to backend.";
+      const data = await res.json();
+
+      if (data.script) {
+        output.innerText = data.script;
+      } else {
+        output.innerText = "No script returned.";
       }
+    } catch (e) {
+      output.innerText = "Error connecting to backend.";
     }
-  </script>
-</body>
-</html>
+  }
+</script>
